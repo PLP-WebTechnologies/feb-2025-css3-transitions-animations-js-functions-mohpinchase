@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animation Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2ecc71;
+      --accent-color: #e74c3c;
+      --dark-color: #34495e;
+      --light-color: #ecf0f1;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background-color: var(--light-color);
+      color: var(--dark-color);
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card h2 {
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      position: relative;
+    }
+    
+    .card h2::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+    
+    .card:hover h2::after {
+      width: 100%;
+    }
+    
+    .control-panel {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: bold;
+    }
+    
+    button:hover {
+      background-color: #2980b9;
+    }
+    
+    .success {
+      background-color: var(--secondary-color);
+    }
+    
+    .success:hover {
+      background-color: #27ae60;
+    }
+    
+    .animation-box {
+      height: 150px;
+      background-color: var(--light-color);
+      margin: 15px 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .animated-element {
+      width: 50px;
+      height: 50px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      position: absolute;
+    }
+    
+    .notes-container {
+      margin: 15px 0;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      resize: vertical;
+      height: 100px;
+      transition: border-color 0.3s ease;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    
+    .bounce { animation: bounce 1s infinite; }
+    .rotate { animation: rotate 2s linear infinite; }
+    .pulse { animation: pulse 1.5s infinite; }
+    .shake { animation: shake 0.5s infinite; }
+    
+    .animation-active {
+      animation-play-state: running;
+    }
+    
+    .animation-paused {
+      animation-play-state: paused;
+    }
+    
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--dark-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    
+    .theme-toggle:hover {
+      transform: rotate(30deg);
+    }
+    
+    .theme-toggle span {
+      color: white;
+      font-size: 20px;
+    }
+    
+    /* Dark Theme */
+    .dark-theme {
+      background-color: #2c3e50;
+      color: #ecf0f1;
+    }
+    
+    .dark-theme .card {
+      background-color: #34495e;
+      color: #ecf0f1;
+    }
+    
+    .dark-theme h2 {
+      color: #3498db;
+    }
+    
+    .dark-theme .animation-box {
+      background-color: #2c3e50;
+    }
+    
+    .dark-theme textarea {
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      border-color: #34495e;
+    }
+    
+    .counter {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin: 10px 0;
+      color: var(--primary-color);
+    }
+    
+    .counter-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--dark-color);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="theme-toggle" id="themeToggle">
+    <span>🌓</span>
+  </div>
+  
+  <header>
+    <h1>Animation Dashboard</h1>
+    <p>Demonstrating CSS3 animations, transitions and JavaScript interaction</p>
+  </header>
+  
+  <div class="container">
+    <div class="card">
+      <h2>CSS Animations</h2>
+      <div class="animation-box">
+        <div class="animated-element" id="animatedElement"></div>
+      </div>
+      <div class="control-panel">
+        <div class="animation-controls">
+          <button id="bounceBtn">Bounce</button>
+          <button id="rotateBtn">Rotate</button>
+          <button id="pulseBtn">Pulse</button>
+          <button id="shakeBtn">Shake</button>
+        </div>
+        <button id="pauseResumeBtn">Pause Animation</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Local Storage Notes</h2>
+      <p>Type a note below and it will be saved automatically:</p>
+      <div class="notes-container">
+        <textarea id="notesArea" placeholder="Enter your notes here..."></textarea>
+      </div>
+      <div class="control-panel">
+        <button id="saveNotesBtn" class="success">Save Notes</button>
+        <button id="clearNotesBtn">Clear Notes</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Interactive Counter</h2>
+      <p>Counter is stored in localStorage and persists between sessions.</p>
+      <div class="counter" id="counterDisplay">0</div>
+      <div class="control-panel">
+        <div class="counter-controls">
+          <button id="decrementBtn">-</button>
+          <button id="incrementBtn">+</button>
+        </div>
+        <button id="resetCounterBtn">Reset Counter</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="toast" id="toast">Changes saved!</div>
+  
+  <script>
+    // DOM Elements
+    const animatedElement = document.getElementById('animatedElement');
+    const bounceBtn = document.getElementById('bounceBtn');
+    const rotateBtn = document.getElementById('rotateBtn');
+    const pulseBtn = document.getElementById('pulseBtn');
+    const shakeBtn = document.getElementById('shakeBtn');
+    const pauseResumeBtn = document.getElementById('pauseResumeBtn');
+    const notesArea = document.getElementById('notesArea');
+    const saveNotesBtn = document.getElementById('saveNotesBtn');
+    const clearNotesBtn = document.getElementById('clearNotesBtn');
+    const counterDisplay = document.getElementById('counterDisplay');
+    const incrementBtn = document.getElementById('incrementBtn');
+    const decrementBtn = document.getElementById('decrementBtn');
+    const resetCounterBtn = document.getElementById('resetCounterBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const toast = document.getElementById('toast');
+    
+    // Animation State
+    let currentAnimation = '';
+    let isAnimationPaused = false;
+    
+    // Initialize localStorage values
+    function initializeLocalStorage() {
+      // Check if counter exists in localStorage
+      if (localStorage.getItem('counter') === null) {
+        localStorage.setItem('counter', '0');
+      }
+      
+      // Load notes from localStorage
+      if (localStorage.getItem('notes') !== null) {
+        notesArea.value = localStorage.getItem('notes');
+      }
+      
+      // Load theme preference
+      if (localStorage.getItem('darkTheme') === 'true') {
+        document.body.classList.add('dark-theme');
+      }
+      
+      // Update counter display
+      counterDisplay.textContent = localStorage.getItem('counter');
+    }
+    
+    // Animation functions
+    function setAnimation(animationClass) {
+      // Remove all animation classes
+      animatedElement.classList.remove('bounce', 'rotate', 'pulse', 'shake');
+      
+      // Add new animation class
+      if (animationClass) {
+        animatedElement.classList.add(animationClass);
+        currentAnimation = animationClass;
+      }
+      
+      // Handle animation state (paused or active)
+      if (isAnimationPaused) {
+        animatedElement.classList.add('animation-paused');
+      } else {
+        animatedElement.classList.remove('animation-paused');
+      }
+    }
+    
+    function toggleAnimationState() {
+      isAnimationPaused = !isAnimationPaused;
+      
+      if (isAnimationPaused) {
+        animatedElement.classList.add('animation-paused');
+        pauseResumeBtn.textContent = 'Resume Animation';
+      } else {
+        animatedElement.classList.remove('animation-paused');
+        pauseResumeBtn.textContent = 'Pause Animation';
+      }
+    }
+    
+    // Local Storage functions
+    function saveNotes() {
+      localStorage.setItem('notes', notesArea.value);
+      showToast('Notes saved!');
+    }
+    
+    function clearNotes() {
+      notesArea.value = '';
+      localStorage.removeItem('notes');
+      showToast('Notes cleared!');
+    }
+    
+    function updateCounter(value) {
+      let counter = parseInt(localStorage.getItem('counter'));
+      counter += value;
+      localStorage.setItem('counter', counter.toString());
+      counterDisplay.textContent = counter;
+    }
+    
+    function resetCounter() {
+      localStorage.setItem('counter', '0');
+      counterDisplay.textContent = '0';
+      showToast('Counter reset!');
+    }
+    
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+      const isDarkTheme = document.body.classList.contains('dark-theme');
+      localStorage.setItem('darkTheme', isDarkTheme.toString());
+      showToast(isDarkTheme ? 'Dark theme enabled' : 'Light theme enabled');
+    }
+    
+    // Toast notification
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Event Listeners
+    bounceBtn.addEventListener('click', () => setAnimation('bounce'));
+    rotateBtn.addEventListener('click', () => setAnimation('rotate'));
+    pulseBtn.addEventListener('click', () => setAnimation('pulse'));
+    shakeBtn.addEventListener('click', () => setAnimation('shake'));
+    pauseResumeBtn.addEventListener('click', toggleAnimationState);
+    
+    saveNotesBtn.addEventListener('click', saveNotes);
+    clearNotesBtn.addEventListener('click', clearNotes);
+    
+    incrementBtn.addEventListener('click', () => updateCounter(1));
+    decrementBtn.addEventListener('click', () => updateCounter(-1));
+    resetCounterBtn.addEventListener('click', resetCounter);
+    
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // Auto-save notes when typing (debounced)
+    let saveTimeout;
+    notesArea.addEventListener('input', () => {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(saveNotes, 1000);
+    });
+    
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeLocalStorage();
+      setAnimation('bounce'); // Set default animation
+    });
+  </script>
+</body>
+</html>
